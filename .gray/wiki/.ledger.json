@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "committed_at": "2026-10-10T05:27:31Z",
+  "head": null,
+  "files": {
+    ".gitignore": {
+      "m": 1791595844,
+      "s": 8
+    },
+    "Cargo.lock": {
+      "m": 1791595932,
+      "s": 2640
+    },
+    "Cargo.toml": {
+      "m": 1791595844,
+      "s": 352
+    },
+    "README.md": {
+      "m": 1791596379,
+      "s": 1678
+    },
+    "src/lib.rs": {
+      "m": 1791596345,
+      "s": 14841
+    },
+    "src/main.rs": {
+      "m": 1791595844,
+      "s": 59
+    }
+  },
+  "pages": [
+    "architecture.md",
+    "flows/prompt-context.md",
+    "flows/sidecar-protocol.md",
+    "flows/stamps-command.md",
+    "flows/tool-timing.md",
+    "flows/turn-timing.md",
+    "glossary.md",
+    "index.md",
+    "modules/lib.md"
+  ]
+}
