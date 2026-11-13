@@ -25,6 +25,7 @@ fn manifest() -> Value {
         "protocol": "1.1",
         "tools": [],
         "commands": ["/stamps"],
+        "command_descriptions": {"/stamps": "per-session timing breakdown"},
         "hooks": ["prompt/context"],
     })
 }
@@ -188,7 +189,8 @@ fn render_table(entries: &[Value], path: &Path) -> String {
                 let tools = e.get("tools").and_then(Value::as_u64).unwrap_or(0);
                 out.push_str(&format!(
                     "{at}  turn {:<12} {ms:>8} · {tools} tool{}\n",
-                    "", if tools == 1 { "" } else { "s" }
+                    "",
+                    if tools == 1 { "" } else { "s" }
                 ));
             }
             _ => {}
@@ -303,7 +305,13 @@ fn key_file(key: &str) -> String {
     key.hash(&mut h);
     let clean: String = key
         .chars()
-        .map(|c| if c.is_ascii_alphanumeric() || c == '.' || c == '-' { c } else { '_' })
+        .map(|c| {
+            if c.is_ascii_alphanumeric() || c == '.' || c == '-' {
+                c
+            } else {
+                '_'
+            }
+        })
         .take(48)
         .collect();
     format!("{}-{:016x}", clean.trim_matches('.'), h.finish())
@@ -332,15 +340,21 @@ mod tests {
 
     fn notify(state: &State, ty: &str, extra: Value) {
         let mut params = json!({"type": ty, "session": {"id": "s1", "cwd": "/tmp"}});
-        params.as_object_mut().unwrap().extend(extra.as_object().unwrap().clone());
+        params
+            .as_object_mut()
+            .unwrap()
+            .extend(extra.as_object().unwrap().clone());
         let (reply, exit) = handle(&json!({"method": "event/notify", "params": params}), state);
         assert!(reply.is_none() && !exit);
     }
 
     fn call(state: &State, method: &str, params: Value) -> Value {
-        handle(&json!({ "id": 1, "method": method, "params": params }), state)
-            .0
-            .unwrap()
+        handle(
+            &json!({ "id": 1, "method": method, "params": params }),
+            state,
+        )
+        .0
+        .unwrap()
     }
 
     #[test]
@@ -375,7 +389,10 @@ mod tests {
                 json!({"name": "/stamps", "argv": [], "session": {"id": "s1"}}),
             );
             let text = r["result"]["text"].as_str().unwrap();
-            assert!(text.contains("tool bash") && text.contains("turn"), "{text}");
+            assert!(
+                text.contains("tool bash") && text.contains("turn"),
+                "{text}"
+            );
             assert!(text.contains("3 entries"));
 
             let r = call(&state, "prompt/context", json!({"session": {"id": "s1"}}));
@@ -415,8 +432,7 @@ mod tests {
     #[test]
     fn shutdown_replies_then_exits() {
         let state: State = Mutex::new(HashMap::new());
-        let (reply, exit) =
-            handle(&json!({ "id": 2, "method": "plugin/shutdown" }), &state);
+        let (reply, exit) = handle(&json!({ "id": 2, "method": "plugin/shutdown" }), &state);
         assert!(reply.is_some() && exit);
     }
 }
