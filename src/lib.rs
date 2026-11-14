@@ -24,6 +24,7 @@ fn manifest() -> Value {
         "version": env!("CARGO_PKG_VERSION"),
         "protocol": "1.1",
         "tools": [],
+        "description": "per-session timing breakdown",
         "commands": ["/stamps"],
         "command_descriptions": {"/stamps": "per-session timing breakdown"},
         "hooks": ["prompt/context"],
